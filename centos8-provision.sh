@@ -56,3 +56,6 @@ export LESSOPEN=\"|/usr/bin/pygmentize -g -O style=colorful %s\"" \
          -e "\$a\[[ -s /etc/grc.zsh ]] && source /etc/grc.zsh" \
          -i.bak \
          ~/.zshrc'
+
+# Disable SELINUX
+# sed -i -e 's/^SELINUX=enforcing/SELINUX=disabled/' /etc/selinux/config
