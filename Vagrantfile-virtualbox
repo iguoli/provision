@@ -24,5 +24,9 @@ Vagrant.configure("2") do |config|
     config.yum_proxy.http  = "DIRECT"
   end
 
-    config.vm.provision "shell", path: 'https://raw.githubusercontent.com/iguoli/provision/main/vagrant-provision.sh'
+    # Copy the customized .vimrc to vm for vagrant user
+    config.vm.provision "file", source: "~/git-repo/conf/.vimrc", destination: "$HOME/.vimrc"
+
+    # Run the centos 8 provision script
+    config.vm.provision "shell", path: 'https://raw.githubusercontent.com/iguoli/provision/main/centos8-provision.sh'
 end

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Replace the offical yum repo with the UTSC mirror repo
+# Replace the offical yum repo with the UTSC mirror's repo
 sed -e 's|^baseurl=http://mirror.centos.org/$contentdir|baseurl=https://mirrors.ustc.edu.cn/centos|g' \
     -i.bak \
     /etc/yum.repos.d/CentOS-Linux-AppStream.repo \
@@ -9,7 +9,7 @@ sed -e 's|^baseurl=http://mirror.centos.org/$contentdir|baseurl=https://mirrors.
     /etc/yum.repos.d/CentOS-Linux-PowerTools.repo \
     /etc/yum.repos.d/CentOS-Linux-Plus.repo
 
-# Replace the Fedora EPEL repo with the UTSC mirror repo
+# Replace the Fedora EPEL repo with the UTSC mirror's repo
 sed -e 's|^metalink=|#metalink=|g' \
     -e 's|^#baseurl=https\?://download.fedoraproject.org/pub/epel/|baseurl=https://mirrors.ustc.edu.cn/epel/|g' \
     -e 's|^#baseurl=https\?://download.example/pub/epel/|baseurl=https://mirrors.ustc.edu.cn/epel/|g' \
@@ -21,7 +21,7 @@ yum makecache
 # Install git and proxy utils
 yum install -y git connect-proxy proxychains-ng
 
-# Set ZSH as default shell
+# Install and set ZSH as default shell of vagrant user
 yum install -y zsh util-linux-user
 which zsh | sudo tee -a /etc/shells
 chsh -s "$(which zsh)" vagrant
@@ -30,6 +30,10 @@ chsh -s "$(which zsh)" vagrant
 su - vagrant -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 su - vagrant -c 'git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions'
 su - vagrant -c 'git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting'
+
+# Install vim-plug and plugins
+su - vagrant -c 'curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+vim +PlugInstall +qa
 
 # Install pygments
 yum install -y python3-pygments
@@ -41,7 +45,7 @@ cd grc
 cd ..
 rm -rf grc
 
-# Customize .zshrc file
+# Customize .zshrc file for vagrant user
 su - vagrant -c \
     'sed -e "s|^plugins=(git)|plugins=(git perl zsh-autosuggestions zsh-syntax-highlighting common-aliases z vi-mode)|" \
          -e "/^# HYPHEN_INSENSITIVE/s//HYPHEN_INSENSITIVE/" \
@@ -59,3 +63,10 @@ export LESSOPEN=\"|/usr/bin/pygmentize -g -O style=colorful %s\"" \
 
 # Disable SELINUX
 # sed -i -e 's/^SELINUX=enforcing/SELINUX=disabled/' /etc/selinux/config
+
+# Enable the web application to access database
+setsebool -P httpd_can_network_connect_db on
+
+# Open services access in firewalld
+firewall-cmd --add-service=http --add-service=https --add-service=postgresql
+firewall-cmd --add-service=http --add-service=https --add-service=postgresql --permanent
