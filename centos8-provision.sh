@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 
 # Replace the offical yum repo with the UTSC mirror's repo
-sed -e 's|^baseurl=http://mirror.centos.org/$contentdir|baseurl=https://mirrors.ustc.edu.cn/centos|g' \
+sed -e 's|^mirrorlist=|#mirrorlist=|g' \
+    -e 's|^#baseurl=|baseurl=|g' \
+    -e 's|^baseurl=http://mirror.centos.org/$contentdir|baseurl=https://mirrors.ustc.edu.cn/centos|g' \
     -i.bak \
     /etc/yum.repos.d/CentOS-Linux-AppStream.repo \
     /etc/yum.repos.d/CentOS-Linux-BaseOS.repo \
