@@ -31,9 +31,8 @@ su - vagrant -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/
 su - vagrant -c 'git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions'
 su - vagrant -c 'git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting'
 
-# Install vim-plug and plugins
+# Install vim-plug
 su - vagrant -c 'curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
-vim +PlugInstall +qa
 
 # Install pygments
 yum install -y python3-pygments
